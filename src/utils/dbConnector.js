@@ -189,4 +189,9 @@ class DBConnector {
     }
 }
 
-export default DBConnector;
+const dbConnector = new DBConnector();
+
+export const connectToDatabase = (dbConfig) => dbConnector.connect(dbConfig);
+export const closeConnection = (sequelize) => dbConnector.disconnect(sequelize);
+
+export default dbConnector;
