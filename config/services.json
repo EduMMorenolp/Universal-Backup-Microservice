@@ -1,0 +1,38 @@
+{
+  "services": [
+    {
+      "name": "my-backend",
+      "description": "Backend principal",
+      "database": {
+        "host": "localhost",
+        "port": 5432,
+        "database": "my_database",
+        "username": "postgres",
+        "password": "password",
+        "dialect": "postgres"
+      },
+      "backup": {
+        "enabled": true,
+        "schedule": "0 2 * * *",
+        "retention": 30
+      }
+    },
+    {
+      "name": "my-microservice",
+      "description": "Otro microservicio",
+      "database": {
+        "host": "localhost",
+        "port": 5432,
+        "database": "another_database",
+        "username": "postgres",
+        "password": "password",
+        "dialect": "postgres"
+      },
+      "backup": {
+        "enabled": true,
+        "schedule": "0 3 * * *",
+        "retention": 7
+      }
+    }
+  ]
+}
