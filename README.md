@@ -111,6 +111,9 @@ La documentación completa está organizada en la carpeta `documents/`:
 - `POST /api/restore/validate` - Validar BD destino
 - `POST /api/restore/clean` - Limpiar BD destino
 
+### Testing
+- `POST /api/test/run` - Ejecutar tests automáticos
+
 Ver documentación completa en [documents/API-ENDPOINTS.md](documents/API-ENDPOINTS.md)
 
 ## 📊 Flujo de Trabajo Básico
@@ -275,6 +278,7 @@ Ver configuración detallada en [documents/CLOUD-DATABASES.md](documents/CLOUD-D
 - [x] Restore con transacciones y rollback
 - [x] Métricas y estadísticas
 - [x] Backup incremental completo
+- [x] Sistema de testing automático
 - [ ] Anonimización de datos
 - [ ] Dashboard web
 - [ ] Soporte para MySQL

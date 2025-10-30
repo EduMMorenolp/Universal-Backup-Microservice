@@ -28,6 +28,13 @@
 - Opción incremental: true y basedOn en endpoint /api/backup/extract [30/10/2025]
 - Metadata de backups incrementales con stats de cambios [30/10/2025]
 - Actualización de Postman collection con request de backup incremental [30/10/2025]
+- Sistema de testing automático de backups [30/10/2025]
+- Módulo backupTester.js con suite completa de tests [30/10/2025]
+- Endpoint POST /api/test/run para ejecutar tests automáticamente [30/10/2025]
+- Tests: Backup completo, segundo backup, comparación e integridad [30/10/2025]
+- Validación automática de que múltiples backups no se rompen [30/10/2025]
+- Scripts SQL para base de datos de testing (test-db/) [30/10/2025]
+- Actualización de Postman collection con endpoint de testing [30/10/2025]
 
 ### Changed
 - (Agregar cambios aquí)

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import backupRoutes from './src/api/backupController.js';
 import advancedRoutes from './src/api/advancedController.js';
 import restoreRoutes from './src/api/restoreController.js';
+import testRoutes from './src/api/testController.js';
 import cronScheduler from './src/scheduler/cronScheduler.js';
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use('/api/backup', backupRoutes);
 app.use('/api/advanced', advancedRoutes);
 app.use('/api/restore', restoreRoutes);
+app.use('/api/test', testRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -56,6 +58,9 @@ app.get('/', (req, res) => {
                 compare: 'POST /api/advanced/compare',
                 uploadS3: 'POST /api/advanced/upload-s3',
                 metrics: 'GET /api/advanced/metrics'
+            },
+            testing: {
+                runTests: 'POST /api/test/run'
             },
             health: 'GET /health'
         }

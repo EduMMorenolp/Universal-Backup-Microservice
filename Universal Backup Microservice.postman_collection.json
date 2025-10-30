@@ -217,6 +217,29 @@
 			]
 		},
 		{
+			"name": "Testing Automático",
+			"item": [
+				{
+					"name": "Ejecutar Tests Automáticos",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"backup_test_db\",\n    \"username\": \"postgres\",\n    \"password\": \"postgres\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/test/run",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "test", "run"]
+						},
+						"description": "Ejecuta suite completa de tests: 2 backups, comparación e integridad"
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Características Avanzadas",
 			"item": [
 				{
