@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import backupRoutes from './src/api/backupController.js';
 import advancedRoutes from './src/api/advancedController.js';
+import restoreRoutes from './src/api/restoreController.js';
 import cronScheduler from './src/scheduler/cronScheduler.js';
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(express.json({ limit: '50mb' }));
 // Routes
 app.use('/api/backup', backupRoutes);
 app.use('/api/advanced', advancedRoutes);
+app.use('/api/restore', restoreRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -37,6 +39,7 @@ app.get('/', (req, res) => {
             analyze: 'POST /api/backup/analyze',
             extract: 'POST /api/backup/extract',
             list: 'GET /api/backup/list',
+            restore: 'POST /api/restore',
             health: 'GET /health'
         }
     });

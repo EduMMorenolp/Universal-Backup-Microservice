@@ -120,6 +120,101 @@
 			]
 		},
 		{
+			"name": "Restore de Backups",
+			"item": [
+				{
+					"name": "Obtener Info de Backup",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"database\": \"my_database\",\n  \"backupId\": \"backup-20250128-143022\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/restore/info",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "restore", "info"]
+						},
+						"description": "Obtiene información detallada de un backup antes de restaurar"
+					},
+					"response": []
+				},
+				{
+					"name": "Validar BD Destino",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"targetDbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"target_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/restore/validate",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "restore", "validate"]
+						},
+						"description": "Valida si la BD destino está vacía o tiene datos"
+					},
+					"response": []
+				},
+				{
+					"name": "Limpiar BD Destino",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"targetDbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"target_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/restore/clean",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "restore", "clean"]
+						},
+						"description": "Limpia todas las tablas de la BD destino (TRUNCATE CASCADE)"
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurar Backup (BD Vacía)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"database\": \"my_database\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"targetDbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"target_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/restore",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "restore"]
+						},
+						"description": "Restaura backup en BD vacía. Falla si la BD tiene datos."
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurar Backup (Force)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"database\": \"my_database\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"targetDbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"target_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"options\": {\n    \"force\": true\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/restore",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "restore"]
+						},
+						"description": "Restaura backup con force: true. Limpia BD destino automáticamente."
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Características Avanzadas",
 			"item": [
 				{

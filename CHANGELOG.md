@@ -3,7 +3,19 @@
 ## [Unreleased]
 
 ### Added
-- (Agregar nuevas funcionalidades aquí)
+- Sistema completo de restore de backups [30/10/2025]
+- Endpoint POST /api/restore para restaurar backups [30/10/2025]
+- Endpoint POST /api/restore/info para obtener información de backup [30/10/2025]
+- Endpoint POST /api/restore/validate para validar BD destino [30/10/2025]
+- Endpoint POST /api/restore/clean para limpiar BD destino [30/10/2025]
+- Transacciones automáticas en restore con rollback en caso de error [30/10/2025]
+- Validación de BD destino vacía antes de restore [30/10/2025]
+- Opción force: true para sobrescribir BD con datos [30/10/2025]
+- Limpieza automática de BD con TRUNCATE CASCADE [30/10/2025]
+- Ejecución secuencial de seeders con manejo de errores [30/10/2025]
+- Módulo backupRestorer.js con funciones de restore [30/10/2025]
+- Controlador restoreController.js con 4 endpoints [30/10/2025]
+- Actualización de Postman collection con 5 requests de restore [30/10/2025]
 
 ### Changed
 - (Agregar cambios aquí)
