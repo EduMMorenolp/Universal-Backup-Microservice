@@ -1,0 +1,229 @@
+{
+	"info": {
+		"_postman_id": "ff9211f5-5418-4974-a0c5-3bf20058e12a",
+		"name": "Universal Backup Microservice",
+		"description": "Microservicio universal de backup y análisis de bases de datos Sequelize para cualquier proyecto",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46483562"
+	},
+	"item": [
+		{
+			"name": "Health & Info",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/health",
+							"host": ["{{BASE_URL}}"],
+							"path": ["health"]
+						},
+						"description": "Verifica el estado del microservicio"
+					},
+					"response": []
+				},
+				{
+					"name": "Service Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}",
+							"host": ["{{BASE_URL}}"]
+						},
+						"description": "Información del servicio y endpoints disponibles"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Análisis de Base de Datos",
+			"item": [
+				{
+					"name": "Analizar Base de Datos",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"database_name\",\n    \"username\": \"postgres\",\n    \"password\": \"password\",\n    \"dialect\": \"postgres\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/backup/analyze",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "backup", "analyze"]
+						},
+						"description": "Analiza la estructura de cualquier base de datos Sequelize"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Extracción de Backups",
+			"item": [
+				{
+					"name": "Extraer Backup (Seeders)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"database_name\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"options\": {\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/backup/extract",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "backup", "extract"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Extraer Backup (JSON)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"database_name\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"options\": {\n    \"chunkSize\": 500,\n    \"format\": \"json\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/backup/extract",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "backup", "extract"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gestión de Backups",
+			"item": [
+				{
+					"name": "Listar Backups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/backup/list",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "backup", "list"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Características Avanzadas",
+			"item": [
+				{
+					"name": "Programar Backup Automático",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"daily-backup\",\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"my_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"schedule\": \"0 2 * * *\",\n  \"retention\": 30,\n  \"options\": {\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/advanced/schedule",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "advanced", "schedule"]
+						},
+						"description": "Programa backup automático con cron (0 2 * * * = 2 AM diario)"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Backups Programados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/advanced/schedules",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "advanced", "schedules"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Backup Programado",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/advanced/schedule/daily-backup",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "advanced", "schedule", "daily-backup"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Comparar Dos Backups",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dbName\": \"my_database\",\n  \"backupId1\": \"backup-20250128-143022\",\n  \"backupId2\": \"backup-20250129-143022\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/advanced/compare",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "advanced", "compare"]
+						},
+						"description": "Compara dos backups y retorna diferencias"
+					},
+					"response": []
+				},
+				{
+					"name": "Subir Backup a S3",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dbName\": \"my_database\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"s3Config\": {\n    \"bucket\": \"my-backups\",\n    \"region\": \"us-east-1\",\n    \"accessKeyId\": \"YOUR_ACCESS_KEY\",\n    \"secretAccessKey\": \"YOUR_SECRET_KEY\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/advanced/upload-s3",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "advanced", "upload-s3"]
+						},
+						"description": "Comprime y sube backup a AWS S3"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Métricas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/advanced/metrics",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "advanced", "metrics"]
+						},
+						"description": "Métricas completas: total backups, espacio usado, estadísticas"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:4000",
+			"type": "string"
+		}
+	]
+}
