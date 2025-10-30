@@ -4,6 +4,7 @@ Microservicio universal de backup y análisis de bases de datos Sequelize para c
 
 ## 🎯 Características
 
+### Características Básicas
 - ✅ **Análisis Automático** - Inspecciona estructura de BD y modelos
 - ✅ **Resolución de Dependencias** - Ordena modelos según claves foráneas
 - ✅ **Backup Universal** - Funciona con cualquier BD Sequelize
@@ -11,6 +12,13 @@ Microservicio universal de backup y análisis de bases de datos Sequelize para c
 - ✅ **API REST** - Endpoints para análisis y extracción
 - ✅ **Multi-Servicio** - Gestiona múltiples bases de datos
 - ✅ **Local y Nube** - Soporta bases de datos locales y en la nube
+
+### Características Avanzadas
+- ✅ **Backups Programados** - Cron scheduling con retención automática
+- ✅ **Comparación de Backups** - Detecta diferencias entre backups
+- ✅ **Upload a S3** - Compresión y subida automática a AWS S3
+- ✅ **Métricas Completas** - Estadísticas de backups y base de datos
+- ✅ **Backup Incremental** - Base para backups diferenciales (en desarrollo)
 
 ## 🚀 Instalación
 
@@ -28,6 +36,12 @@ Copiar `.env.example` a `.env`:
 ```env
 PORT=4000
 BACKUP_DIR=./backups
+
+# AWS S3 (opcional - para upload a S3)
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=us-east-1
+AWS_BUCKET_NAME=your-bucket-name
 ```
 
 ### 2. Configurar Servicios
@@ -63,165 +77,70 @@ npm run dev
 
 El servidor estará disponible en `http://localhost:4000`
 
-### API Endpoints
+## 📚 Documentación
 
-#### 1. Analizar Base de Datos
+La documentación completa está organizada en la carpeta `documents/`:
 
-```bash
-POST http://localhost:4000/api/backup/analyze
-Content-Type: application/json
+- **[API-ENDPOINTS.md](documents/API-ENDPOINTS.md)** - Documentación completa de todos los endpoints
+- **[ADVANCED-FEATURES.md](documents/ADVANCED-FEATURES.md)** - Guía de características avanzadas
+- **[CLOUD-DATABASES.md](documents/CLOUD-DATABASES.md)** - Configuración para bases de datos en la nube
+- **[ARCHITECTURE.md](documents/ARCHITECTURE.md)** - Arquitectura y estructura del microservicio
+- **[EXAMPLES.md](documents/EXAMPLES.md)** - Ejemplos de uso y casos prácticos
 
-{
-  "dbConfig": {
-    "host": "localhost",
-    "port": 5432,
-    "database": "your_database",
-    "username": "postgres",
-    "password": "password"
-  }
-}
-```
+## 🔧 API Endpoints - Resumen
 
-**Respuesta:**
-```json
-{
-  "success": true,
-  "database": "your_database",
-  "report": {
-    "totalModels": 15,
-    "totalRecords": 1000
-  },
-  "order": ["Role", "User", "Post", ...],
-  "entitiesOrder": {
-    "Role": {
-      "timestamp": "20250128120000",
-      "tableName": "roles",
-      "description": "Role"
-    }
-  }
-}
-```
+### Básicos
+- `GET /health` - Health check
+- `POST /api/backup/analyze` - Analizar base de datos
+- `POST /api/backup/extract` - Extraer backup
+- `GET /api/backup/list` - Listar backups
+- `DELETE /api/backup/:database/:backupId` - Eliminar backup
 
-#### 2. Extraer Backup
+### Avanzados
+- `POST /api/advanced/schedule` - Programar backup automático
+- `GET /api/advanced/schedules` - Listar backups programados
+- `DELETE /api/advanced/schedule/:id` - Cancelar backup programado
+- `POST /api/advanced/compare` - Comparar dos backups
+- `POST /api/advanced/upload-s3` - Subir backup a S3
+- `GET /api/advanced/metrics` - Obtener métricas
+
+Ver documentación completa en [documents/API-ENDPOINTS.md](documents/API-ENDPOINTS.md)
+
+## 📊 Flujo de Trabajo Básico
+
+### 1. Analizar Base de Datos
 
 ```bash
-POST http://localhost:4000/api/backup/extract
-Content-Type: application/json
-
-{
-  "dbConfig": {
-    "host": "localhost",
-    "port": 5432,
-    "database": "your_database",
-    "username": "postgres",
-    "password": "password"
-  },
-  "options": {
-    "chunkSize": 300,
-    "format": "seeders"
-  }
-}
-```
-
-**Respuesta:**
-```json
-{
-  "success": true,
-  "database": "your_database",
-  "backupId": "backup-20250128-143022",
-  "files": 20,
-  "records": 1000,
-  "path": "./backups/backup-20250128-143022"
-}
-```
-
-#### 3. Listar Backups
-
-```bash
-GET http://localhost:4000/api/backup/list
-```
-
-**Respuesta:**
-```json
-{
-  "success": true,
-  "backupsByDatabase": {
-    "my_database": [
-      {
-        "id": "backup-20250128-143022",
-        "timestamp": "2025-01-28T14:30:22.000Z",
-        "records": 1000,
-        "files": 20
-      }
-    ],
-    "another_database": [
-      {
-        "id": "backup-20250128-160000",
-        "timestamp": "2025-01-28T16:00:00.000Z",
-        "records": 500,
-        "files": 10
-      }
-    ]
-  }
-}
-```
-
-## 📊 Flujo de Trabajo
-
-### 1. Análisis de Base de Datos
-
-```bash
-# Analizar estructura
 curl -X POST http://localhost:4000/api/backup/analyze \
   -H "Content-Type: application/json" \
-  -d '{"dbConfig": {...}}'
+  -d '{"dbConfig": {"host": "localhost", "port": 5432, "database": "my_db", "username": "postgres", "password": "pass"}}'
 ```
 
 ### 2. Generar Backup
 
 ```bash
-# Extraer datos
 curl -X POST http://localhost:4000/api/backup/extract \
   -H "Content-Type: application/json" \
-  -d '{"dbConfig": {...}}'
+  -d '{"dbConfig": {...}, "options": {"chunkSize": 300, "format": "seeders"}}'
 ```
 
-### 3. Usar Seeders Generados
-
-Los seeders se generan en `./backups/backup-YYYYMMDD-HHMMSS/`
+### 3. Programar Backup Automático
 
 ```bash
-# Copiar seeders al proyecto
-cp backups/my_database/backup-20250128-143022/*.cjs ../your-project/src/database/seeders/
-
-# Ejecutar seeders
-cd ../your-project
-npm run seeders
+curl -X POST http://localhost:4000/api/advanced/schedule \
+  -H "Content-Type: application/json" \
+  -d '{"dbConfig": {...}, "schedule": "0 2 * * *", "retentionDays": 7}'
 ```
 
-## 🔧 Características Avanzadas
+## 🎯 Casos de Uso
 
-### Análisis Automático
-
-El microservicio:
-- Detecta todos los modelos automáticamente
-- Identifica claves foráneas y dependencias
-- Genera orden de extracción correcto
-- Crea timestamps únicos para cada modelo
-
-### Resolución de Dependencias
-
-Usa ordenamiento topológico para:
-- Evitar errores de claves foráneas
-- Garantizar orden correcto de inserción
-- Detectar dependencias circulares
-
-### Multi-Servicio
-
-Puede gestionar múltiples bases de datos:
-- Cualquier backend Sequelize
-- Múltiples microservicios
-- Bases de datos de desarrollo/producción
+1. **Backup Automático** - Programar backups diarios con retención
+2. **Migración de Datos** - Entre entornos (dev → staging → prod)
+3. **Disaster Recovery** - Restore rápido con seeders generados
+4. **Análisis de Estructura** - Documentar y entender BD
+5. **Datos de Prueba** - Generar datasets consistentes
+6. **Auditoría** - Comparar backups para detectar cambios
+7. **Almacenamiento Cloud** - Upload automático a S3
 
 ## 📁 Estructura de Backups
 
@@ -242,113 +161,114 @@ backups/
         └── ...
 ```
 
-## 🎯 Casos de Uso
+## 🌐 Bases de Datos Soportadas
 
-1. **Backup Automático** - Programar backups diarios
-2. **Migración de Datos** - Entre entornos
-3. **Disaster Recovery** - Restore rápido
-4. **Análisis de Estructura** - Documentar BD
-5. **Datos de Prueba** - Generar datasets
+Compatible con cualquier PostgreSQL accesible por red:
+
+- **Local** - PostgreSQL en localhost
+- **AWS RDS** - Amazon Relational Database Service
+- **Google Cloud SQL** - Google Cloud Platform
+- **Azure Database** - Microsoft Azure
+- **Heroku Postgres** - Heroku managed database
+- **DigitalOcean** - Managed Databases
+- **Cualquier PostgreSQL** - Con acceso de red
+
+Ver configuración detallada en [documents/CLOUD-DATABASES.md](documents/CLOUD-DATABASES.md)
 
 ## 🔒 Seguridad
 
-- No almacena credenciales
-- Conexiones temporales
-- Backups locales
-- Sin acceso externo por defecto
+- ✅ No almacena credenciales (solo en memoria durante conexión)
+- ✅ Conexiones temporales y cerradas después de uso
+- ✅ Backups locales por defecto
+- ✅ Soporte SSL para conexiones seguras
+- ✅ Sin acceso externo por defecto
+- ✅ Credenciales S3 opcionales y configurables
 
-## 🌐 Bases de Datos Soportadas
+## 🚀 Características Destacadas
 
-El microservicio funciona con cualquier base de datos PostgreSQL accesible por red:
-
-### Local
-```json
+### Backups Programados
+```javascript
+// Backup diario a las 2 AM, retención de 7 días
 {
-  "host": "localhost",
-  "port": 5432,
-  "database": "my_database",
-  "username": "postgres",
-  "password": "password"
+  "schedule": "0 2 * * *",
+  "retentionDays": 7
 }
 ```
 
-### AWS RDS
-```json
+### Comparación de Backups
+```javascript
+// Detecta diferencias entre dos backups
 {
-  "host": "mydb.abc123.us-east-1.rds.amazonaws.com",
-  "port": 5432,
-  "database": "production_db",
-  "username": "admin",
-  "password": "secure_password"
+  "backupId1": "backup-20250128-143022",
+  "backupId2": "backup-20250128-150000"
 }
 ```
 
-### Google Cloud SQL
-```json
+### Upload a S3
+```javascript
+// Comprime y sube a S3 automáticamente
 {
-  "host": "35.123.456.789",
-  "port": 5432,
-  "database": "production_db",
-  "username": "postgres",
-  "password": "password"
+  "backupId": "backup-20250128-143022",
+  "s3Config": {
+    "bucket": "my-backups",
+    "region": "us-east-1"
+  }
 }
 ```
 
-### Azure Database
-```json
-{
-  "host": "myserver.postgres.database.azure.com",
-  "port": 5432,
-  "database": "production_db",
-  "username": "admin@myserver",
-  "password": "password"
-}
-```
+### Métricas Completas
+- Total de backups por base de datos
+- Tamaño total de backups
+- Estadísticas de registros
+- Información de tablas
 
-### Heroku Postgres
-```json
-{
-  "host": "ec2-xxx.compute-1.amazonaws.com",
-  "port": 5432,
-  "database": "d1234567890abc",
-  "username": "user",
-  "password": "password"
-}
-```
+## 📦 Tecnologías
 
-### Consideraciones de Producción
+- **Node.js** - Runtime
+- **Express** - API REST
+- **Sequelize** - ORM y análisis de modelos
+- **PostgreSQL** - Base de datos soportada
+- **node-cron** - Scheduling de backups
+- **AWS SDK** - Upload a S3
+- **archiver** - Compresión de backups
 
-**Seguridad:**
-- El microservicio se conecta remotamente usando credenciales
-- No almacena credenciales (solo en memoria durante la conexión)
-- Soporta conexiones SSL si la BD lo requiere
-
-**Red:**
-- Requiere acceso de red a la BD (configurar firewall/security groups)
-- El microservicio debe poder alcanzar el host de la BD
-- Puertos deben estar abiertos para conexiones entrantes
-
-**Performance:**
-- La extracción puede ser lenta con BDs grandes en la nube
-- Depende del ancho de banda de red
-- Recomendado: desplegar el microservicio en la misma región que la BD
-
-## 📝 Notas
+## 📝 Notas Importantes
 
 - Compatible con PostgreSQL (local y nube)
 - Requiere Sequelize en servicios objetivo
-- Genera seeders con formato seguro
-- Fragmentación automática en chunks de 300
+- Genera seeders con formato seguro (IDs específicos en down)
+- Fragmentación automática en chunks de 300 registros
 - Funciona con cualquier BD accesible por red
+- Backups organizados por nombre de base de datos
 
-## 🚀 Próximas Características
+## 🔄 Roadmap
 
+- [x] Análisis automático de modelos
+- [x] Resolución de dependencias
+- [x] Extracción con chunking
+- [x] Backups programados (cron)
+- [x] Comparación de backups
+- [x] Upload a S3
+- [x] Métricas y estadísticas
+- [ ] Backup incremental completo
 - [ ] Anonimización de datos
-- [ ] Compresión de backups
-- [ ] Programación de backups (cron)
 - [ ] Dashboard web
 - [ ] Soporte para MySQL
 - [ ] Restore automático
+- [ ] Notificaciones (email/webhook)
+
+## 📖 Documentación Adicional
+
+- [Postman Collection](Universal%20Backup%20Microservice.postman_collection.json) - Colección completa de endpoints
+- [CHANGELOG.md](CHANGELOG.md) - Historial de cambios
+
+## 🤝 Contribución
+
+Este es un microservicio universal diseñado para ser independiente y reutilizable en cualquier proyecto.
+
+## 📄 Licencia
+
+MIT
 
 ---
 
