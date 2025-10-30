@@ -36,10 +36,27 @@ app.get('/', (req, res) => {
         service: 'Universal Backup Microservice',
         version: '1.0.0',
         endpoints: {
-            analyze: 'POST /api/backup/analyze',
-            extract: 'POST /api/backup/extract',
-            list: 'GET /api/backup/list',
-            restore: 'POST /api/restore',
+            basic: {
+                analyze: 'POST /api/backup/analyze',
+                extract: 'POST /api/backup/extract',
+                extractIncremental: 'POST /api/backup/extract (with incremental: true)',
+                list: 'GET /api/backup/list',
+                delete: 'DELETE /api/backup/:database/:backupId'
+            },
+            restore: {
+                restore: 'POST /api/restore',
+                info: 'POST /api/restore/info',
+                validate: 'POST /api/restore/validate',
+                clean: 'POST /api/restore/clean'
+            },
+            advanced: {
+                schedule: 'POST /api/advanced/schedule',
+                schedules: 'GET /api/advanced/schedules',
+                cancelSchedule: 'DELETE /api/advanced/schedule/:id',
+                compare: 'POST /api/advanced/compare',
+                uploadS3: 'POST /api/advanced/upload-s3',
+                metrics: 'GET /api/advanced/metrics'
+            },
             health: 'GET /health'
         }
     });
