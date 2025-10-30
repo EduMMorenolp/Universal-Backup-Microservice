@@ -130,8 +130,14 @@ router.post('/upload-s3', async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Backup uploaded to S3 successfully',
-            s3: result
+            message: 'Backup uploaded to S3 successfully with metadata and manifest',
+            upload: {
+                bucket: result.bucket,
+                zipUrl: result.zipUrl,
+                manifestUrl: result.manifestUrl,
+                size: result.sizeFormatted
+            },
+            manifest: result.manifest
         });
     } catch (error) {
         console.error('Error uploading to S3:', error);

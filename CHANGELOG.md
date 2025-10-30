@@ -16,6 +16,11 @@
 - Módulo backupRestorer.js con funciones de restore [30/10/2025]
 - Controlador restoreController.js con 4 endpoints [30/10/2025]
 - Actualización de Postman collection con 5 requests de restore [30/10/2025]
+- Upload a S3 con metadatos estructurados en objetos [30/10/2025]
+- Generación automática de manifest.json en S3 con resumen del backup [30/10/2025]
+- Metadatos en objetos S3: database, timestamp, totalRecords, totalFiles, format, version, size [30/10/2025]
+- Manifest incluye summary completo, info del microservicio y URLs de S3 [30/10/2025]
+- Formateo automático de tamaños de archivo (Bytes, KB, MB, GB) [30/10/2025]
 
 ### Changed
 - (Agregar cambios aquí)
