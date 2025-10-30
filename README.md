@@ -16,7 +16,8 @@ Microservicio universal de backup y análisis de bases de datos Sequelize para c
 ### Características Avanzadas
 - ✅ **Backups Programados** - Cron scheduling con retención automática
 - ✅ **Comparación de Backups** - Detecta diferencias entre backups
-- ✅ **Upload a S3** - Compresión y subida automática a AWS S3
+- ✅ **Upload a S3 con Metadatos** - Compresión, metadatos estructurados y manifest.json
+- ✅ **Restore Completo** - Restauración con transacciones y rollback automático
 - ✅ **Métricas Completas** - Estadísticas de backups y base de datos
 - ✅ **Backup Incremental** - Base para backups diferenciales (en desarrollo)
 
@@ -101,8 +102,14 @@ La documentación completa está organizada en la carpeta `documents/`:
 - `GET /api/advanced/schedules` - Listar backups programados
 - `DELETE /api/advanced/schedule/:id` - Cancelar backup programado
 - `POST /api/advanced/compare` - Comparar dos backups
-- `POST /api/advanced/upload-s3` - Subir backup a S3
+- `POST /api/advanced/upload-s3` - Subir backup a S3 con metadatos
 - `GET /api/advanced/metrics` - Obtener métricas
+
+### Restore
+- `POST /api/restore` - Restaurar backup en BD destino
+- `POST /api/restore/info` - Obtener información de backup
+- `POST /api/restore/validate` - Validar BD destino
+- `POST /api/restore/clean` - Limpiar BD destino
 
 Ver documentación completa en [documents/API-ENDPOINTS.md](documents/API-ENDPOINTS.md)
 
@@ -124,12 +131,12 @@ curl -X POST http://localhost:4000/api/backup/extract \
   -d '{"dbConfig": {...}, "options": {"chunkSize": 300, "format": "seeders"}}'
 ```
 
-### 3. Programar Backup Automático
+### 3. Restaurar Backup
 
 ```bash
-curl -X POST http://localhost:4000/api/advanced/schedule \
+curl -X POST http://localhost:4000/api/restore \
   -H "Content-Type: application/json" \
-  -d '{"dbConfig": {...}, "schedule": "0 2 * * *", "retentionDays": 7}'
+  -d '{"database": "my_db", "backupId": "backup-20250128-143022", "targetDbConfig": {...}, "options": {"force": true}}'
 ```
 
 ## 🎯 Casos de Uso
@@ -204,14 +211,30 @@ Ver configuración detallada en [documents/CLOUD-DATABASES.md](documents/CLOUD-D
 }
 ```
 
-### Upload a S3
+### Upload a S3 con Metadatos
 ```javascript
-// Comprime y sube a S3 automáticamente
+// Comprime, sube con metadatos y genera manifest.json
 {
   "backupId": "backup-20250128-143022",
   "s3Config": {
     "bucket": "my-backups",
     "region": "us-east-1"
+  }
+}
+// Genera:
+// - backup.zip con metadatos (database, records, version, size)
+// - manifest.json con resumen completo
+```
+
+### Restore con Transacciones
+```javascript
+// Restaura con rollback automático en caso de error
+{
+  "database": "my_database",
+  "backupId": "backup-20250128-143022",
+  "targetDbConfig": {...},
+  "options": {
+    "force": true  // Limpia BD automáticamente
   }
 }
 ```
@@ -248,14 +271,16 @@ Ver configuración detallada en [documents/CLOUD-DATABASES.md](documents/CLOUD-D
 - [x] Extracción con chunking
 - [x] Backups programados (cron)
 - [x] Comparación de backups
-- [x] Upload a S3
+- [x] Upload a S3 con metadatos y manifest
+- [x] Restore con transacciones y rollback
 - [x] Métricas y estadísticas
-- [ ] Backup incremental completo
+- [x] Backup incremental completo
 - [ ] Anonimización de datos
 - [ ] Dashboard web
 - [ ] Soporte para MySQL
-- [ ] Restore automático
 - [ ] Notificaciones (email/webhook)
+- [ ] Download desde S3
+- [ ] Restore desde S3
 
 ## 📖 Documentación Adicional
 

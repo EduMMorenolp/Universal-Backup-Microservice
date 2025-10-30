@@ -66,7 +66,7 @@
 			"name": "Extracción de Backups",
 			"item": [
 				{
-					"name": "Extraer Backup (Seeders)",
+					"name": "Extraer Backup Completo (Full)",
 					"request": {
 						"method": "POST",
 						"header": [{"key": "Content-Type", "value": "application/json"}],
@@ -78,24 +78,26 @@
 							"raw": "{{BASE_URL}}/api/backup/extract",
 							"host": ["{{BASE_URL}}"],
 							"path": ["api", "backup", "extract"]
-						}
+						},
+						"description": "Extrae backup completo con todos los datos"
 					},
 					"response": []
 				},
 				{
-					"name": "Extraer Backup (JSON)",
+					"name": "Extraer Backup Incremental",
 					"request": {
 						"method": "POST",
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"database_name\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"options\": {\n    \"chunkSize\": 500,\n    \"format\": \"json\"\n  }\n}"
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"database_name\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"options\": {\n    \"incremental\": true,\n    \"basedOn\": \"backup-20250128-143022\",\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/backup/extract",
 							"host": ["{{BASE_URL}}"],
 							"path": ["api", "backup", "extract"]
-						}
+						},
+						"description": "Extrae solo cambios desde el último backup (nuevos y modificados)"
 					},
 					"response": []
 				}

@@ -370,11 +370,11 @@ Content-Type: application/json
 
 ---
 
-## ☁️ Upload a S3
+## ☁️ Upload a S3 con Metadatos
 
 ### POST /api/advanced/upload-s3
 
-Comprime un backup a ZIP y lo sube a AWS S3.
+Comprime un backup a ZIP, agrega metadatos estructurados y genera manifest.json en S3.
 
 **Request:**
 ```bash
@@ -397,21 +397,63 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "message": "Backup uploaded to S3 successfully",
-  "s3": {
+  "message": "Backup uploaded to S3 successfully with metadata and manifest",
+  "upload": {
     "bucket": "my-backups",
-    "key": "backups/my_database/backup-20250128-143022.zip",
-    "url": "https://my-backups.s3.us-east-1.amazonaws.com/backups/my_database/backup-20250128-143022.zip",
-    "size": "1.8 MB"
+    "zipUrl": "https://my-backups.s3.amazonaws.com/backups/my_database/backup-20250128-143022.zip",
+    "manifestUrl": "https://my-backups.s3.amazonaws.com/backups/my_database/backup-20250128-143022/manifest.json",
+    "size": "2.38 MB"
+  },
+  "manifest": {
+    "backupId": "backup-20250128-143022",
+    "database": "my_database",
+    "timestamp": "2025-01-28T14:30:22.000Z",
+    "summary": {
+      "totalRecords": 1000,
+      "totalFiles": 20,
+      "format": "seeders",
+      "chunkSize": 300,
+      "size": 2500000,
+      "sizeFormatted": "2.38 MB"
+    },
+    "microservice": {
+      "name": "Universal Backup Microservice",
+      "version": "1.0.0"
+    },
+    "s3": {
+      "bucket": "my-backups",
+      "region": "us-east-1",
+      "zipKey": "backups/my_database/backup-20250128-143022.zip",
+      "manifestKey": "backups/my_database/backup-20250128-143022/manifest.json"
+    },
+    "uploadedAt": "2025-01-28T14:35:00.000Z"
   }
 }
 ```
 
+**Metadatos en Objeto ZIP S3:**
+- `database` - Nombre de la base de datos
+- `backupId` - ID único del backup
+- `timestamp` - Fecha de creación del backup
+- `totalRecords` - Total de registros
+- `totalFiles` - Total de archivos
+- `format` - Formato del backup (seeders/json/sql)
+- `microserviceVersion` - Versión del microservicio
+- `size` - Tamaño del archivo ZIP
+
+**Manifest.json Generado:**
+- Resumen completo del backup
+- Información del microservicio
+- URLs de S3 (zip y manifest)
+- Timestamp de upload
+- Tamaños formateados
+
 **Características:**
 - Compresión automática a ZIP
-- Upload directo a S3
-- URL pública del backup
-- Reduce tamaño y tiempo de transferencia
+- Metadatos estructurados en objeto S3
+- Manifest.json separado para consulta rápida
+- URLs públicas de zip y manifest
+- Formateo automático de tamaños
 
 ---
 
@@ -458,6 +500,191 @@ GET http://localhost:4000/api/advanced/metrics
 - Información de almacenamiento
 - Métricas por base de datos
 - Schedules activos
+
+---
+
+## 🔄 Restore de Backups
+
+### POST /api/restore/info
+
+Obtiene información detallada de un backup antes de restaurar.
+
+**Request:**
+```bash
+POST http://localhost:4000/api/restore/info
+Content-Type: application/json
+
+{
+  "database": "my_database",
+  "backupId": "backup-20250128-143022"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "backup": {
+    "backupId": "backup-20250128-143022",
+    "database": "my_database",
+    "timestamp": "2025-01-28T14:30:22.000Z",
+    "totalRecords": 1000,
+    "totalFiles": 20,
+    "format": "seeders",
+    "chunkSize": 300,
+    "path": "./backups/my_database/backup-20250128-143022"
+  }
+}
+```
+
+---
+
+### POST /api/restore/validate
+
+Valida si la base de datos destino está vacía o tiene datos.
+
+**Request:**
+```bash
+POST http://localhost:4000/api/restore/validate
+Content-Type: application/json
+
+{
+  "targetDbConfig": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "target_database",
+    "username": "postgres",
+    "password": "password"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "validation": {
+    "isEmpty": false,
+    "tables": [
+      {"table": "users", "count": 100},
+      {"table": "posts", "count": 500}
+    ],
+    "totalRecords": 600
+  }
+}
+```
+
+---
+
+### POST /api/restore/clean
+
+Limpia todas las tablas de la base de datos destino (TRUNCATE CASCADE).
+
+**Request:**
+```bash
+POST http://localhost:4000/api/restore/clean
+Content-Type: application/json
+
+{
+  "targetDbConfig": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "target_database",
+    "username": "postgres",
+    "password": "password"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Database cleaned successfully",
+  "result": {
+    "success": true,
+    "tablesCleared": 15
+  }
+}
+```
+
+---
+
+### POST /api/restore
+
+Restaura un backup en la base de datos destino con transacciones y rollback automático.
+
+**Request (BD Vacía):**
+```bash
+POST http://localhost:4000/api/restore
+Content-Type: application/json
+
+{
+  "database": "my_database",
+  "backupId": "backup-20250128-143022",
+  "targetDbConfig": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "target_database",
+    "username": "postgres",
+    "password": "password"
+  }
+}
+```
+
+**Request (Force - Sobrescribir):**
+```bash
+POST http://localhost:4000/api/restore
+Content-Type: application/json
+
+{
+  "database": "my_database",
+  "backupId": "backup-20250128-143022",
+  "targetDbConfig": {...},
+  "options": {
+    "force": true
+  }
+}
+```
+
+**Response (Éxito):**
+```json
+{
+  "success": true,
+  "message": "Backup restored successfully",
+  "backup": {
+    "backupId": "backup-20250128-143022",
+    "database": "my_database",
+    "totalRecords": 1000,
+    "totalFiles": 20
+  },
+  "result": {
+    "filesProcessed": 20,
+    "recordsInserted": 1000
+  }
+}
+```
+
+**Response (Error - BD no vacía):**
+```json
+{
+  "success": false,
+  "error": "Target database is not empty. Use force: true to overwrite",
+  "validation": {
+    "isEmpty": false,
+    "totalRecords": 600
+  }
+}
+```
+
+**Características:**
+- Transacciones automáticas
+- Rollback automático en caso de error
+- Validación de BD destino
+- Opción force para sobrescribir
+- Limpieza automática con force: true
+- Ejecución secuencial de seeders
+- Manejo de errores por archivo
 
 ---
 

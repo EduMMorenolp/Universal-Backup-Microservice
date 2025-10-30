@@ -21,6 +21,13 @@
 - Metadatos en objetos S3: database, timestamp, totalRecords, totalFiles, format, version, size [30/10/2025]
 - Manifest incluye summary completo, info del microservicio y URLs de S3 [30/10/2025]
 - Formateo automático de tamaños de archivo (Bytes, KB, MB, GB) [30/10/2025]
+- Sistema completo de backup incremental [30/10/2025]
+- Módulo incrementalExtractor.js para detección de cambios [30/10/2025]
+- Detección automática de registros nuevos y modificados usando timestamps [30/10/2025]
+- Generación de seeders incrementales (INSERT para nuevos, UPDATE para modificados) [30/10/2025]
+- Opción incremental: true y basedOn en endpoint /api/backup/extract [30/10/2025]
+- Metadata de backups incrementales con stats de cambios [30/10/2025]
+- Actualización de Postman collection con request de backup incremental [30/10/2025]
 
 ### Changed
 - (Agregar cambios aquí)

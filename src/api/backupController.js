@@ -3,6 +3,7 @@ import DBConnector from '../utils/dbConnector.js';
 import ModelAnalyzer from '../analyzer/modelAnalyzer.js';
 import DependencyResolver from '../analyzer/dependencyResolver.js';
 import DataExtractor from '../extractor/dataExtractor.js';
+import incrementalExtractor from '../extractor/incrementalExtractor.js';
 
 const router = express.Router();
 
@@ -59,7 +60,7 @@ router.post('/analyze', async (req, res) => {
 
 /**
  * POST /api/backup/extract
- * Extrae datos de BD y genera backup
+ * Extrae datos de BD y genera backup (completo o incremental)
  */
 router.post('/extract', async (req, res) => {
     try {
@@ -76,7 +77,32 @@ router.post('/extract', async (req, res) => {
         const connector = new DBConnector();
         const sequelize = await connector.connect(dbConfig);
 
-        // Analizar y resolver orden
+        // Verificar si es backup incremental
+        if (options.incremental && options.basedOn) {
+            console.log('🔄 Generando backup incremental...');
+            const results = await incrementalExtractor.extractIncremental(
+                sequelize,
+                options.basedOn,
+                dbConfig.database,
+                options
+            );
+
+            await connector.disconnect(sequelize);
+
+            return res.json({
+                success: true,
+                database: dbConfig.database,
+                backupId: results.backupId,
+                type: 'incremental',
+                basedOn: results.basedOn,
+                changes: results.changes,
+                files: results.files,
+                path: results.path
+            });
+        }
+
+        // Backup completo
+        console.log('📦 Generando backup completo...');
         const analyzer = new ModelAnalyzer();
         const modelGraph = await analyzer.analyzeModels(sequelize);
         
@@ -98,6 +124,7 @@ router.post('/extract', async (req, res) => {
             success: true,
             database: results.database,
             backupId: results.backupId,
+            type: 'full',
             files: results.files.length,
             records: results.totalRecords,
             path: results.backupPath
