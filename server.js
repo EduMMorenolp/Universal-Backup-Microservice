@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
 import backupRoutes from './src/api/backupController.js';
 import advancedRoutes from './src/api/advancedController.js';
 import restoreRoutes from './src/api/restoreController.js';
@@ -15,6 +16,7 @@ const PORT = process.env.PORT || 4000;
 // Middlewares
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // Routes
 app.use('/api/backup', backupRoutes);

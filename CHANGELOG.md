@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- Morgan para logging HTTP de requests y responses [30/10/2025]
 - Sistema completo de restore de backups [30/10/2025]
 - Endpoint POST /api/restore para restaurar backups [30/10/2025]
 - Endpoint POST /api/restore/info para obtener información de backup [30/10/2025]

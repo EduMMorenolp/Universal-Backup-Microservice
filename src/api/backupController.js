@@ -1,5 +1,5 @@
 import express from 'express';
-import DBConnector from '../utils/dbConnector.js';
+import dbConnector from '../utils/dbConnector.js';
 import ModelAnalyzer from '../analyzer/modelAnalyzer.js';
 import DependencyResolver from '../analyzer/dependencyResolver.js';
 import DataExtractor from '../extractor/dataExtractor.js';
@@ -23,8 +23,7 @@ router.post('/analyze', async (req, res) => {
         }
 
         // Conectar a BD
-        const connector = new DBConnector();
-        const sequelize = await connector.connect(dbConfig);
+        const sequelize = await dbConnector.connect(dbConfig);
 
         // Analizar modelos
         const analyzer = new ModelAnalyzer();
@@ -39,7 +38,7 @@ router.post('/analyze', async (req, res) => {
         // Generar reporte
         const report = analyzer.generateReport(modelGraph);
 
-        await connector.disconnect(sequelize);
+        await dbConnector.disconnect(sequelize);
 
         res.json({
             success: true,
@@ -74,8 +73,7 @@ router.post('/extract', async (req, res) => {
         }
 
         // Conectar a BD
-        const connector = new DBConnector();
-        const sequelize = await connector.connect(dbConfig);
+        const sequelize = await dbConnector.connect(dbConfig);
 
         // Verificar si es backup incremental
         if (options.incremental && options.basedOn) {
@@ -87,7 +85,7 @@ router.post('/extract', async (req, res) => {
                 options
             );
 
-            await connector.disconnect(sequelize);
+            await dbConnector.disconnect(sequelize);
 
             return res.json({
                 success: true,
@@ -118,7 +116,7 @@ router.post('/extract', async (req, res) => {
             dbName: dbConfig.database
         });
 
-        await connector.disconnect(sequelize);
+        await dbConnector.disconnect(sequelize);
 
         res.json({
             success: true,
@@ -132,6 +130,46 @@ router.post('/extract', async (req, res) => {
 
     } catch (error) {
         console.error('Error en extracción:', error);
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * DELETE /api/backup/database/:dbName
+ * Elimina todos los backups de una base de datos
+ */
+router.delete('/database/:dbName', async (req, res) => {
+    try {
+        const { dbName } = req.params;
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        
+        const backupDir = process.env.BACKUP_DIR || './backups';
+        const dbPath = path.join(backupDir, dbName);
+
+        // Verificar que existe
+        try {
+            await fs.access(dbPath);
+        } catch (error) {
+            return res.status(404).json({
+                error: 'Not Found',
+                message: `Database backups not found: ${dbName}`
+            });
+        }
+
+        // Eliminar directorio completo
+        await fs.rm(dbPath, { recursive: true, force: true });
+
+        res.json({
+            success: true,
+            message: `All backups deleted for database: ${dbName}`
+        });
+
+    } catch (error) {
+        console.error('Error eliminando backups:', error);
         res.status(500).json({
             error: 'Internal Server Error',
             message: error.message

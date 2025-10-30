@@ -26,6 +26,13 @@ class IncrementalExtractor {
             const Model = sequelize.models[modelName];
             if (!Model) continue;
 
+            // Verificar si el modelo tiene updated_at
+            const hasUpdatedAt = Model.rawAttributes.updated_at || Model.rawAttributes.updatedAt;
+            if (!hasUpdatedAt) {
+                console.log(`⚠️  Modelo ${modelName} sin updated_at, omitiendo...`);
+                continue;
+            }
+
             // Detectar registros nuevos o modificados
             const changedRecords = await Model.findAll({
                 where: {
@@ -55,6 +62,24 @@ class IncrementalExtractor {
                 }
                 if (modifiedRecords.length > 0) {
                     changes.modified[modelName] = modifiedRecords;
+                }
+            }
+
+            // Detectar eliminaciones (soft delete)
+            const hasIsDeleted = Model.rawAttributes.is_deleted || Model.rawAttributes.isDeleted;
+            if (hasIsDeleted) {
+                const deletedRecords = await Model.findAll({
+                    where: {
+                        is_deleted: true,
+                        updated_at: {
+                            [sequelize.Sequelize.Op.gt]: baseTimestamp
+                        }
+                    },
+                    raw: true
+                });
+
+                if (deletedRecords.length > 0) {
+                    changes.deleted[modelName] = deletedRecords;
                 }
             }
         }
@@ -87,15 +112,15 @@ class IncrementalExtractor {
         const stats = {
             new: Object.values(changes.new).reduce((sum, arr) => sum + arr.length, 0),
             modified: Object.values(changes.modified).reduce((sum, arr) => sum + arr.length, 0),
-            deleted: 0
+            deleted: Object.values(changes.deleted).reduce((sum, arr) => sum + arr.length, 0)
         };
 
-        console.log(`📊 Cambios detectados: ${stats.new} nuevos, ${stats.modified} modificados`);
+        console.log(`📊 Cambios detectados: ${stats.new} nuevos, ${stats.modified} modificados, ${stats.deleted} eliminados`);
 
-        // Crear directorio para backup incremental
+        // Crear directorio para backup incremental (separado)
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0] + '-' +
                          new Date().toTimeString().split(' ')[0].replace(/:/g, '');
-        const backupId = `backup-${timestamp}`;
+        const backupId = `incremental-${timestamp}`;
         const backupPath = path.join(backupDir, database, backupId);
         await fs.mkdir(backupPath, { recursive: true });
 
@@ -119,6 +144,16 @@ class IncrementalExtractor {
                 modelName,
                 records,
                 'modified',
+                chunkSize
+            );
+        }
+
+        for (const [modelName, records] of Object.entries(changes.deleted)) {
+            fileCount += await this.generateIncrementalSeeders(
+                backupPath,
+                modelName,
+                records,
+                'deleted',
                 chunkSize
             );
         }
@@ -165,7 +200,7 @@ class IncrementalExtractor {
             const partNumber = Math.floor(i / chunkSize) + 1;
             const timestamp = Date.now() + fileCount;
             
-            const fileName = `${timestamp}-${changeType}-${tableName}-part-${partNumber}.cjs`;
+            const fileName = `${timestamp}-inc-${changeType}-${tableName}-part-${partNumber}.cjs`;
             const filePath = path.join(backupPath, fileName);
 
             const seederContent = this.generateSeederContent(tableName, chunk, changeType);
@@ -183,7 +218,25 @@ class IncrementalExtractor {
     generateSeederContent(tableName, records, changeType) {
         const ids = records.map(r => `'${r.id}'`).join(', ');
 
-        if (changeType === 'new') {
+        if (changeType === 'deleted') {
+            // Para registros eliminados: marcar is_deleted = true
+            return `module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.bulkUpdate('${tableName}', 
+      { is_deleted: true },
+      { id: [${ids}] }
+    );
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkUpdate('${tableName}', 
+      { is_deleted: false },
+      { id: [${ids}] }
+    );
+  }
+};
+`;
+        } else if (changeType === 'new') {
             // Para registros nuevos: INSERT
             const values = records.map(record => {
                 const fields = Object.entries(record)

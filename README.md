@@ -93,9 +93,9 @@ La documentación completa está organizada en la carpeta `documents/`:
 ### Básicos
 - `GET /health` - Health check
 - `POST /api/backup/analyze` - Analizar base de datos
-- `POST /api/backup/extract` - Extraer backup
+- `POST /api/backup/extract` - Extraer backup (completo o incremental)
 - `GET /api/backup/list` - Listar backups
-- `DELETE /api/backup/:database/:backupId` - Eliminar backup
+- `DELETE /api/backup/database/:dbName` - Eliminar todos los backups de una BD
 
 ### Avanzados
 - `POST /api/advanced/schedule` - Programar backup automático
@@ -159,17 +159,31 @@ Los backups se organizan por nombre de base de datos:
 ```
 backups/
 ├── my_database/
-│   ├── backup-20250128-143022/
+│   ├── backup-20250128-143022/          # Backup completo
 │   │   ├── metadata.json
 │   │   ├── 20250128120000-roles.cjs
 │   │   ├── 20250128120001-users-part-1.cjs
 │   │   └── ...
-│   └── backup-20250128-150000/
+│   ├── incremental-20250128-150000/     # Backup incremental
+│   │   ├── metadata.json
+│   │   ├── 20250128150000-inc-new-posts-part-1.cjs
+│   │   ├── 20250128150001-inc-modified-users-part-1.cjs
+│   │   ├── 20250128150002-inc-deleted-comments-part-1.cjs
+│   │   └── ...
+│   └── backup-20250128-160000/
 │       └── ...
 └── another_database/
     └── backup-20250128-160000/
         └── ...
 ```
+
+### Tipos de Backup
+
+- **Completo** (`backup-*`): Todos los datos de la BD
+- **Incremental** (`incremental-*`): Solo cambios desde último backup
+  - `inc-new-*`: Registros nuevos (INSERT)
+  - `inc-modified-*`: Registros modificados (UPDATE)
+  - `inc-deleted-*`: Registros eliminados (soft delete)
 
 ## 🌐 Bases de Datos Soportadas
 
@@ -277,8 +291,9 @@ Ver configuración detallada en [documents/CLOUD-DATABASES.md](documents/CLOUD-D
 - [x] Upload a S3 con metadatos y manifest
 - [x] Restore con transacciones y rollback
 - [x] Métricas y estadísticas
-- [x] Backup incremental completo
+- [x] Backup incremental completo (detecta nuevos, modificados y eliminados)
 - [x] Sistema de testing automático
+- [x] Eliminación masiva de backups por BD
 - [ ] Anonimización de datos
 - [ ] Dashboard web
 - [ ] Soporte para MySQL

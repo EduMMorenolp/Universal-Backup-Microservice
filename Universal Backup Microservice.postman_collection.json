@@ -49,7 +49,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"database_name\",\n    \"username\": \"postgres\",\n    \"password\": \"password\",\n    \"dialect\": \"postgres\"\n  }\n}"
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\",\n    \"dialect\": \"postgres\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/backup/analyze",
@@ -72,7 +72,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"database_name\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"options\": {\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"options\": {\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/backup/extract",
@@ -90,14 +90,14 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"database_name\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"options\": {\n    \"incremental\": true,\n    \"basedOn\": \"backup-20250128-143022\",\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"options\": {\n    \"incremental\": true,\n    \"basedOn\": \"backup-20250128-143022\",\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/backup/extract",
 							"host": ["{{BASE_URL}}"],
 							"path": ["api", "backup", "extract"]
 						},
-						"description": "Extrae solo cambios desde el último backup (nuevos y modificados)"
+						"description": "Extrae solo cambios desde el último backup (nuevos, modificados y eliminados)"
 					},
 					"response": []
 				}
@@ -115,7 +115,22 @@
 							"raw": "{{BASE_URL}}/api/backup/list",
 							"host": ["{{BASE_URL}}"],
 							"path": ["api", "backup", "list"]
-						}
+						},
+						"description": "Lista todos los backups organizados por base de datos (completos e incrementales)"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Todos los Backups de una BD",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/backup/database/{{TEST_DB_NAME}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "backup", "database", "{{TEST_DB_NAME}}"]
+						},
+						"description": "Elimina todos los backups (completos e incrementales) de una base de datos específica"
 					},
 					"response": []
 				}
@@ -131,7 +146,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"database\": \"my_database\",\n  \"backupId\": \"backup-20250128-143022\"\n}"
+							"raw": "{\n  \"database\": \"{{DB_NAME}}\",\n  \"backupId\": \"backup-20250128-143022\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore/info",
@@ -149,7 +164,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"targetDbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"target_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  }\n}"
+							"raw": "{\n  \"targetDbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TARGET_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore/validate",
@@ -167,7 +182,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"targetDbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"target_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  }\n}"
+							"raw": "{\n  \"targetDbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TARGET_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore/clean",
@@ -185,7 +200,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"database\": \"my_database\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"targetDbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"target_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  }\n}"
+							"raw": "{\n  \"database\": \"{{DB_NAME}}\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"targetDbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TARGET_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore",
@@ -203,7 +218,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"database\": \"my_database\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"targetDbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"target_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"options\": {\n    \"force\": true\n  }\n}"
+							"raw": "{\n  \"database\": \"{{DB_NAME}}\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"targetDbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TARGET_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"options\": {\n    \"force\": true\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore",
@@ -220,20 +235,52 @@
 			"name": "Testing Automático",
 			"item": [
 				{
-					"name": "Ejecutar Tests Automáticos",
+					"name": "Listar Tests Disponibles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/test/available",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "test", "available"]
+						},
+						"description": "Lista todos los tests disponibles con sus IDs"
+					},
+					"response": []
+				},
+				{
+					"name": "Ejecutar Todos los Tests",
 					"request": {
 						"method": "POST",
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"backup_test_db\",\n    \"username\": \"postgres\",\n    \"password\": \"postgres\"\n  }\n}"
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TEST_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"tests\": [\"all\"]\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/test/run",
 							"host": ["{{BASE_URL}}"],
 							"path": ["api", "test", "run"]
 						},
-						"description": "Ejecuta suite completa de tests: 2 backups, comparación e integridad"
+						"description": "Ejecuta suite completa: 4 tests"
+					},
+					"response": []
+				},
+				{
+					"name": "Ejecutar Tests Específicos",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TEST_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"tests\": [\"fullBackup\", \"secondBackup\", \"comparison\"]\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/test/run",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "test", "run"]
+						},
+						"description": "Ejecuta solo los tests seleccionados"
 					},
 					"response": []
 				}
@@ -249,7 +296,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"id\": \"daily-backup\",\n  \"dbConfig\": {\n    \"host\": \"localhost\",\n    \"port\": 5432,\n    \"database\": \"my_database\",\n    \"username\": \"postgres\",\n    \"password\": \"password\"\n  },\n  \"schedule\": \"0 2 * * *\",\n  \"retention\": 30,\n  \"options\": {\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
+							"raw": "{\n  \"id\": \"daily-backup\",\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"schedule\": \"0 2 * * *\",\n  \"retention\": 30,\n  \"options\": {\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/advanced/schedule",
@@ -293,7 +340,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dbName\": \"my_database\",\n  \"backupId1\": \"backup-20250128-143022\",\n  \"backupId2\": \"backup-20250129-143022\"\n}"
+							"raw": "{\n  \"dbName\": \"{{DB_NAME}}\",\n  \"backupId1\": \"backup-20250128-143022\",\n  \"backupId2\": \"backup-20250129-143022\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/advanced/compare",
@@ -311,7 +358,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dbName\": \"my_database\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"s3Config\": {\n    \"bucket\": \"my-backups\",\n    \"region\": \"us-east-1\",\n    \"accessKeyId\": \"YOUR_ACCESS_KEY\",\n    \"secretAccessKey\": \"YOUR_SECRET_KEY\"\n  }\n}"
+							"raw": "{\n  \"dbName\": \"{{DB_NAME}}\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"s3Config\": {\n    \"bucket\": \"my-backups\",\n    \"region\": \"us-east-1\",\n    \"accessKeyId\": \"YOUR_ACCESS_KEY\",\n    \"secretAccessKey\": \"YOUR_SECRET_KEY\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/advanced/upload-s3",
@@ -343,6 +390,41 @@
 		{
 			"key": "BASE_URL",
 			"value": "http://localhost:4000",
+			"type": "string"
+		},
+		{
+			"key": "DB_HOST",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "DB_PORT",
+			"value": "5432",
+			"type": "string"
+		},
+		{
+			"key": "DB_NAME",
+			"value": "apiaServer_production",
+			"type": "string"
+		},
+		{
+			"key": "DB_USERNAME",
+			"value": "postgres",
+			"type": "string"
+		},
+		{
+			"key": "DB_PASSWORD",
+			"value": "root",
+			"type": "string"
+		},
+		{
+			"key": "TARGET_DB_NAME",
+			"value": "target_database",
+			"type": "string"
+		},
+		{
+			"key": "TEST_DB_NAME",
+			"value": "backup_test_db",
 			"type": "string"
 		}
 	]

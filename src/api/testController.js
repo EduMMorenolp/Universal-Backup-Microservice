@@ -9,7 +9,7 @@ const router = express.Router();
  */
 router.post('/run', async (req, res) => {
     try {
-        const { dbConfig } = req.body;
+        const { dbConfig, tests = ['all'] } = req.body;
 
         if (!dbConfig) {
             return res.status(400).json({
@@ -19,7 +19,7 @@ router.post('/run', async (req, res) => {
         }
 
         console.log('🧪 Ejecutando tests automáticos...');
-        const results = await backupTester.runTests(dbConfig);
+        const results = await backupTester.runTests(dbConfig, tests);
 
         res.json({
             success: results.success,
@@ -38,6 +38,43 @@ router.post('/run', async (req, res) => {
             message: error.message
         });
     }
+});
+
+/**
+ * GET /api/test/available
+ * Lista tests disponibles
+ */
+router.get('/available', (req, res) => {
+    res.json({
+        success: true,
+        tests: [
+            {
+                id: 'all',
+                name: 'Todos los Tests',
+                description: 'Ejecuta suite completa'
+            },
+            {
+                id: 'fullBackup',
+                name: 'Backup Completo',
+                description: 'Crea primer backup'
+            },
+            {
+                id: 'secondBackup',
+                name: 'Segundo Backup',
+                description: 'Verifica que no se rompe'
+            },
+            {
+                id: 'comparison',
+                name: 'Comparación',
+                description: 'Compara ambos backups'
+            },
+            {
+                id: 'integrity',
+                name: 'Integridad',
+                description: 'Valida archivos y metadata'
+            }
+        ]
+    });
 });
 
 export default router;
