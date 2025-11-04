@@ -3,6 +3,14 @@
 ## [Unreleased]
 
 ### Added
+- Sistema completo de análisis de esquemas de BD [04/11/2025]
+- Endpoint POST /api/schema/extract para extraer estructura de tablas y generar migraciones [04/11/2025]
+- Endpoint POST /api/schema/incremental para detectar cambios entre esquemas y generar migraciones incrementales [04/11/2025]
+- SchemaAnalyzer para extraer y comparar estructuras de BD [04/11/2025]
+- MigrationGenerator para crear migraciones de Sequelize (CREATE, ALTER, DROP) [04/11/2025]
+- Soporte para comparar BD base vs BD actual (dos configuraciones diferentes) [04/11/2025]
+- Generación automática de migraciones para columnas añadidas, eliminadas y modificadas [04/11/2025]
+- Detección de tablas nuevas, eliminadas y modificadas [04/11/2025]
 - Formato "migrations" para generar migraciones de Sequelize [04/11/2025]
 - Método saveAsMigration() en DataExtractor para crear archivos .js compatibles con sequelize-cli [04/11/2025]
 - Ejemplo de migración generada en examples/migration-example.js [04/11/2025]

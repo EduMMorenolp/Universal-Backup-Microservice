@@ -6,6 +6,7 @@ import backupRoutes from './src/api/backupController.js';
 import advancedRoutes from './src/api/advancedController.js';
 import restoreRoutes from './src/api/restoreController.js';
 import testRoutes from './src/api/testController.js';
+import schemaRoutes from './src/api/schemaController.js';
 import cronScheduler from './src/scheduler/cronScheduler.js';
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use('/api/backup', backupRoutes);
 app.use('/api/advanced', advancedRoutes);
 app.use('/api/restore', restoreRoutes);
 app.use('/api/test', testRoutes);
+app.use('/api/schema', schemaRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -64,6 +66,10 @@ app.get('/', (req, res) => {
             testing: {
                 runTests: 'POST /api/test/run'
             },
+            schema: {
+                extract: 'POST /api/schema/extract',
+                incremental: 'POST /api/schema/incremental'
+            },
             health: 'GET /health'
         }
     });
@@ -82,6 +88,7 @@ console.log(`
     ║   🌐 Server: http://localhost:${PORT}         ║
     ║   📊 Health: http://localhost:${PORT}/health  ║
     ║   ✨ Advanced: /api/advanced/*                ║
+    ║   🏗️  Schema: /api/schema/*                  ║
     ╚═══════════════════════════════════════════════╝
     `);
 });
