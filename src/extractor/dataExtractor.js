@@ -104,6 +104,8 @@ class DataExtractor {
                 filePath = await this.saveAsSeeder(backupPath, filename, config.tableName, chunk, config.description);
             } else if (format === 'json') {
                 filePath = await this.saveAsJSON(backupPath, filename, chunk);
+            } else if (format === 'migrations') {
+                filePath = await this.saveAsMigration(backupPath, filename, config.tableName, chunk, config.description);
             }
 
             files.push(filePath);
@@ -142,6 +144,30 @@ module.exports = {
     async saveAsJSON(backupPath, filename, data) {
         const filePath = path.join(backupPath, `${filename}.json`);
         await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+        return filePath;
+    }
+
+    /**
+     * Guarda como migración de Sequelize
+     */
+    async saveAsMigration(backupPath, filename, tableName, data, description) {
+        const content = `'use strict';
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+    async up(queryInterface, Sequelize) {
+        // ${description} - Migración generada automáticamente
+        await queryInterface.bulkInsert('${tableName}', ${JSON.stringify(data, null, 8)});
+    },
+
+    async down(queryInterface, Sequelize) {
+        // Eliminar todos los registros insertados
+        await queryInterface.bulkDelete('${tableName}', null, {});
+    }
+};`;
+
+        const filePath = path.join(backupPath, `${filename}.js`);
+        await fs.writeFile(filePath, content);
         return filePath;
     }
 

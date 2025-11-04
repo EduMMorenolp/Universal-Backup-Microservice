@@ -119,7 +119,7 @@ Content-Type: application/json
 
 **Options:**
 - `chunkSize` (default: 300) - Registros por archivo
-- `format` (default: "seeders") - Formato: "seeders", "json", "sql"
+- `format` (default: "seeders") - Formato: "seeders", "json", "migrations"
 
 **Response:**
 ```json
