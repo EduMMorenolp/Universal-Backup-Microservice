@@ -3,10 +3,10 @@
 ## [Unreleased]
 
 ### Added
-- Formato "migrations" para generar migraciones de Sequelize [30/10/2025]
-- Método saveAsMigration() en DataExtractor para crear archivos .js compatibles con sequelize-cli [30/10/2025]
-- Ejemplo de migración generada en examples/migration-example.js [30/10/2025]
-- Actualización de documentación API-ENDPOINTS.md con nuevo formato [30/10/2025]
+- Formato "migrations" para generar migraciones de Sequelize [04/11/2025]
+- Método saveAsMigration() en DataExtractor para crear archivos .js compatibles con sequelize-cli [04/11/2025]
+- Ejemplo de migración generada en examples/migration-example.js [04/11/2025]
+- Actualización de documentación API-ENDPOINTS.md con nuevo formato [04/11/2025]
 - Morgan para logging HTTP de requests y responses [30/10/2025]
 - Sistema completo de restore de backups [30/10/2025]
 - Endpoint POST /api/restore para restaurar backups [30/10/2025]
