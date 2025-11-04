@@ -710,6 +710,124 @@ Para conexiones seguras, agregar en `dbConfig`:
 
 ---
 
+## 🏗️ Schema Analysis
+
+### POST /api/schema/extract
+
+Extrae estructura completa de tablas y genera migraciones de Sequelize.
+
+**Request:**
+```bash
+POST http://localhost:4000/api/schema/extract
+Content-Type: application/json
+
+{
+  "dbConfig": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "my_database",
+    "username": "postgres",
+    "password": "password"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "database": "my_database",
+  "backupId": "schema-20251104-151746",
+  "type": "schema",
+  "tables": 15,
+  "files": 15,
+  "path": "./backups/my_database/schema-20251104-151746"
+}
+```
+
+**Genera migraciones:**
+- `1730734800000-create-users.js`
+- `1730734801000-create-posts.js`
+- etc.
+
+---
+
+### POST /api/schema/incremental
+
+Detecta cambios entre dos esquemas y genera migraciones incrementales.
+
+**Request (BD base en vivo + BD actual):**
+```bash
+POST http://localhost:4000/api/schema/incremental
+Content-Type: application/json
+
+{
+  // BD base (versión anterior)
+  "baseDbConfig": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "my_database_old",
+    "username": "postgres",
+    "password": "password"
+  },
+  
+  // BD actual (con cambios)
+  "currentDbConfig": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "my_database_new",
+    "username": "postgres",
+    "password": "password"
+  }
+}
+```
+
+**Request (esquema guardado + BD actual):**
+```bash
+{
+  "baseSchemaId": "schema-20251104-151746",
+  "currentDbConfig": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "my_database_updated",
+    "username": "postgres",
+    "password": "password"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "database": "my_database_new",
+  "backupId": "schema-incremental-20251104-153000",
+  "type": "schema-incremental",
+  "basedOn": "live-comparison",
+  "changes": {
+    "newTables": 2,
+    "droppedTables": 0,
+    "modifiedTables": 3
+  },
+  "files": 5,
+  "path": "./backups/my_database_new/schema-incremental-20251104-153000"
+}
+```
+
+**Genera migraciones para:**
+- ✅ Tablas nuevas (`CREATE TABLE`)
+- ✅ Tablas eliminadas (`DROP TABLE`)
+- ✅ Columnas añadidas (`ADD COLUMN`)
+- ✅ Columnas eliminadas (`REMOVE COLUMN`)
+- ✅ Columnas modificadas (`CHANGE COLUMN`)
+
+**Archivos generados:**
+- `1730734800000-create-new_table.js`
+- `1730734801000-alter-users.js`
+- `1730734802000-drop-old_table.js`
+
+---
+
 ## 📝 Códigos de Error
 
 - `200` - Success

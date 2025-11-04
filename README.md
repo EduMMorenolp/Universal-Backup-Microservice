@@ -19,7 +19,9 @@ Microservicio universal de backup y análisis de bases de datos Sequelize para c
 - ✅ **Upload a S3 con Metadatos** - Compresión, metadatos estructurados y manifest.json
 - ✅ **Restore Completo** - Restauración con transacciones y rollback automático
 - ✅ **Métricas Completas** - Estadísticas de backups y base de datos
-- ✅ **Backup Incremental** - Base para backups diferenciales (en desarrollo)
+- ✅ **Backup Incremental** - Base para backups diferenciales
+- ✅ **Análisis de Esquemas** - Extrae estructura de BD y genera migraciones
+- ✅ **Migraciones Incrementales** - Detecta cambios entre esquemas y genera migraciones
 
 ## 🚀 Instalación
 
@@ -114,6 +116,10 @@ La documentación completa está organizada en la carpeta `documents/`:
 ### Testing
 - `POST /api/test/run` - Ejecutar tests automáticos
 
+### Schema
+- `POST /api/schema/extract` - Extraer estructura de BD y generar migraciones
+- `POST /api/schema/incremental` - Detectar cambios entre esquemas y generar migraciones incrementales
+
 Ver documentación completa en [documents/API-ENDPOINTS.md](documents/API-ENDPOINTS.md)
 
 ## 📊 Flujo de Trabajo Básico
@@ -151,6 +157,8 @@ curl -X POST http://localhost:4000/api/restore \
 5. **Datos de Prueba** - Generar datasets consistentes
 6. **Auditoría** - Comparar backups para detectar cambios
 7. **Almacenamiento Cloud** - Upload automático a S3
+8. **Migraciones de Esquema** - Generar migraciones de Sequelize desde estructura de BD
+9. **Control de Cambios** - Detectar diferencias entre versiones de BD y generar migraciones incrementales
 
 ## 📁 Estructura de Backups
 
@@ -294,6 +302,8 @@ Ver configuración detallada en [documents/CLOUD-DATABASES.md](documents/CLOUD-D
 - [x] Backup incremental completo (detecta nuevos, modificados y eliminados)
 - [x] Sistema de testing automático
 - [x] Eliminación masiva de backups por BD
+- [x] Análisis de esquemas de BD y generación de migraciones
+- [x] Migraciones incrementales para cambios de estructura
 - [ ] Anonimización de datos
 - [ ] Dashboard web
 - [ ] Soporte para MySQL
