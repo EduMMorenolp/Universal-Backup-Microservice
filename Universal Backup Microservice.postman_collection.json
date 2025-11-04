@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ff9211f5-5418-4974-a0c5-3bf20058e12a",
+		"_postman_id": "4f714308-4c19-417f-8d32-52f584188d29",
 		"name": "Universal Backup Microservice",
 		"description": "Microservicio universal de backup y análisis de bases de datos Sequelize para cualquier proyecto",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -17,8 +17,12 @@
 						"header": [],
 						"url": {
 							"raw": "{{BASE_URL}}/health",
-							"host": ["{{BASE_URL}}"],
-							"path": ["health"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"health"
+							]
 						},
 						"description": "Verifica el estado del microservicio"
 					},
@@ -31,7 +35,9 @@
 						"header": [],
 						"url": {
 							"raw": "{{BASE_URL}}",
-							"host": ["{{BASE_URL}}"]
+							"host": [
+								"{{BASE_URL}}"
+							]
 						},
 						"description": "Información del servicio y endpoints disponibles"
 					},
@@ -46,15 +52,26 @@
 					"name": "Analizar Base de Datos",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\",\n    \"dialect\": \"postgres\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/backup/analyze",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "backup", "analyze"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"backup",
+								"analyze"
+							]
 						},
 						"description": "Analiza la estructura de cualquier base de datos Sequelize"
 					},
@@ -69,15 +86,26 @@
 					"name": "Extraer Backup Completo (Full)",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"options\": {\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"options\": {\n    \"chunkSize\": 300,\n    \"format\": \"migrations\" // json - seeders - migrations\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/backup/extract",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "backup", "extract"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"backup",
+								"extract"
+							]
 						},
 						"description": "Extrae backup completo con todos los datos"
 					},
@@ -87,15 +115,26 @@
 					"name": "Extraer Backup Incremental",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"options\": {\n    \"incremental\": true,\n    \"basedOn\": \"backup-20250128-143022\",\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
+							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"options\": {\n    \"incremental\": true,\n    \"basedOn\": \"backup-20251104-144413\",\n    \"chunkSize\": 300,\n    \"format\": \"migrations\" // json - seeders - migrations\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/backup/extract",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "backup", "extract"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"backup",
+								"extract"
+							]
 						},
 						"description": "Extrae solo cambios desde el último backup (nuevos, modificados y eliminados)"
 					},
@@ -113,8 +152,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{BASE_URL}}/api/backup/list",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "backup", "list"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"backup",
+								"list"
+							]
 						},
 						"description": "Lista todos los backups organizados por base de datos (completos e incrementales)"
 					},
@@ -127,8 +172,15 @@
 						"header": [],
 						"url": {
 							"raw": "{{BASE_URL}}/api/backup/database/{{TEST_DB_NAME}}",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "backup", "database", "{{TEST_DB_NAME}}"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"backup",
+								"database",
+								"{{TEST_DB_NAME}}"
+							]
 						},
 						"description": "Elimina todos los backups (completos e incrementales) de una base de datos específica"
 					},
@@ -143,15 +195,26 @@
 					"name": "Obtener Info de Backup",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"database\": \"{{DB_NAME}}\",\n  \"backupId\": \"backup-20250128-143022\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore/info",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "restore", "info"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"restore",
+								"info"
+							]
 						},
 						"description": "Obtiene información detallada de un backup antes de restaurar"
 					},
@@ -161,15 +224,26 @@
 					"name": "Validar BD Destino",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"targetDbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TARGET_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore/validate",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "restore", "validate"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"restore",
+								"validate"
+							]
 						},
 						"description": "Valida si la BD destino está vacía o tiene datos"
 					},
@@ -179,15 +253,26 @@
 					"name": "Limpiar BD Destino",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"targetDbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TARGET_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore/clean",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "restore", "clean"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"restore",
+								"clean"
+							]
 						},
 						"description": "Limpia todas las tablas de la BD destino (TRUNCATE CASCADE)"
 					},
@@ -197,15 +282,25 @@
 					"name": "Restaurar Backup (BD Vacía)",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"database\": \"{{DB_NAME}}\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"targetDbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TARGET_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "restore"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"restore"
+							]
 						},
 						"description": "Restaura backup en BD vacía. Falla si la BD tiene datos."
 					},
@@ -215,15 +310,25 @@
 					"name": "Restaurar Backup (Force)",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"database\": \"{{DB_NAME}}\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"targetDbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TARGET_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"options\": {\n    \"force\": true\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/restore",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "restore"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"restore"
+							]
 						},
 						"description": "Restaura backup con force: true. Limpia BD destino automáticamente."
 					},
@@ -241,8 +346,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{BASE_URL}}/api/test/available",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "test", "available"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"test",
+								"available"
+							]
 						},
 						"description": "Lista todos los tests disponibles con sus IDs"
 					},
@@ -252,15 +363,26 @@
 					"name": "Ejecutar Todos los Tests",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TEST_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"tests\": [\"all\"]\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/test/run",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "test", "run"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"test",
+								"run"
+							]
 						},
 						"description": "Ejecuta suite completa: 4 tests"
 					},
@@ -270,15 +392,26 @@
 					"name": "Ejecutar Tests Específicos",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{TEST_DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"tests\": [\"fullBackup\", \"secondBackup\", \"comparison\"]\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/test/run",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "test", "run"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"test",
+								"run"
+							]
 						},
 						"description": "Ejecuta solo los tests seleccionados"
 					},
@@ -293,15 +426,26 @@
 					"name": "Programar Backup Automático",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"id\": \"daily-backup\",\n  \"dbConfig\": {\n    \"host\": \"{{DB_HOST}}\",\n    \"port\": {{DB_PORT}},\n    \"database\": \"{{DB_NAME}}\",\n    \"username\": \"{{DB_USERNAME}}\",\n    \"password\": \"{{DB_PASSWORD}}\"\n  },\n  \"schedule\": \"0 2 * * *\",\n  \"retention\": 30,\n  \"options\": {\n    \"chunkSize\": 300,\n    \"format\": \"seeders\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/advanced/schedule",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "advanced", "schedule"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"advanced",
+								"schedule"
+							]
 						},
 						"description": "Programa backup automático con cron (0 2 * * * = 2 AM diario)"
 					},
@@ -314,8 +458,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{BASE_URL}}/api/advanced/schedules",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "advanced", "schedules"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"advanced",
+								"schedules"
+							]
 						}
 					},
 					"response": []
@@ -327,8 +477,15 @@
 						"header": [],
 						"url": {
 							"raw": "{{BASE_URL}}/api/advanced/schedule/daily-backup",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "advanced", "schedule", "daily-backup"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"advanced",
+								"schedule",
+								"daily-backup"
+							]
 						}
 					},
 					"response": []
@@ -337,15 +494,26 @@
 					"name": "Comparar Dos Backups",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"dbName\": \"{{DB_NAME}}\",\n  \"backupId1\": \"backup-20250128-143022\",\n  \"backupId2\": \"backup-20250129-143022\"\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/advanced/compare",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "advanced", "compare"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"advanced",
+								"compare"
+							]
 						},
 						"description": "Compara dos backups y retorna diferencias"
 					},
@@ -355,15 +523,26 @@
 					"name": "Subir Backup a S3",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"dbName\": \"{{DB_NAME}}\",\n  \"backupId\": \"backup-20250128-143022\",\n  \"s3Config\": {\n    \"bucket\": \"my-backups\",\n    \"region\": \"us-east-1\",\n    \"accessKeyId\": \"YOUR_ACCESS_KEY\",\n    \"secretAccessKey\": \"YOUR_SECRET_KEY\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/advanced/upload-s3",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "advanced", "upload-s3"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"advanced",
+								"upload-s3"
+							]
 						},
 						"description": "Comprime y sube backup a AWS S3"
 					},
@@ -376,8 +555,14 @@
 						"header": [],
 						"url": {
 							"raw": "{{BASE_URL}}/api/advanced/metrics",
-							"host": ["{{BASE_URL}}"],
-							"path": ["api", "advanced", "metrics"]
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"advanced",
+								"metrics"
+							]
 						},
 						"description": "Métricas completas: total backups, espacio usado, estadísticas"
 					},
@@ -386,46 +571,62 @@
 			]
 		}
 	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
 	"variable": [
 		{
 			"key": "BASE_URL",
-			"value": "http://localhost:4000",
-			"type": "string"
+			"value": "http://localhost:4000"
 		},
 		{
 			"key": "DB_HOST",
-			"value": "localhost",
-			"type": "string"
+			"value": "localhost"
 		},
 		{
 			"key": "DB_PORT",
-			"value": "5432",
-			"type": "string"
+			"value": "5432"
 		},
 		{
 			"key": "DB_NAME",
-			"value": "apiaServer_production",
-			"type": "string"
+			"value": "apiaServer_production"
 		},
 		{
 			"key": "DB_USERNAME",
-			"value": "postgres",
-			"type": "string"
+			"value": "postgres"
 		},
 		{
 			"key": "DB_PASSWORD",
-			"value": "root",
-			"type": "string"
+			"value": "root"
 		},
 		{
 			"key": "TARGET_DB_NAME",
-			"value": "target_database",
-			"type": "string"
+			"value": "target_database"
 		},
 		{
 			"key": "TEST_DB_NAME",
-			"value": "backup_test_db",
-			"type": "string"
+			"value": "backup_test_db"
 		}
 	]
 }
